@@ -13,12 +13,12 @@ export class IoCreateRoomResponse implements CreateRoomResponse {
         }
     }
 
-    private success(): void {
+    private success(data?: any): void {
         // this.io.emit("success", {})
         console.log("SUCCESS")
     }
 
-    private error(): void {
+    private error(error?: any): void {
         // this.io.emit("error", {})
         console.log("ERROR")
     }

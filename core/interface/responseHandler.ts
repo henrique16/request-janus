@@ -1,4 +1,4 @@
 export interface ResponseHandler {
-    success: () => void
-    error: () => void
+    success: (data?: any) => void
+    error: (error?: any) => void
 }

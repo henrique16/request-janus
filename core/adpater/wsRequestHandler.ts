@@ -1,19 +1,22 @@
 import { RequestHandler, Data } from "../use-case/interface/requestHandler"
 import { ResponseHandler } from "../interface/responseHandler"
 import config from "../config/index"
-import Ws, { CONNECTING } from "ws"
+import Ws from "ws"
 import shortid from "shortid"
+import { RepositoryHandler } from "../interface/repositoryHandler"
 
 interface Callback {
     (data: Data, error?: any): void
 }
 
 export class WsRequestHandler implements RequestHandler {
+    private repositoryHandler: RepositoryHandler
     private controller: Map<string, Callback>
     private ws: Ws | null
     public dataRoom: Data | null
 
-    public constructor() {
+    public constructor(repositoryHandler: RepositoryHandler) {
+        this.repositoryHandler = repositoryHandler
         this.controller = new Map<string, Callback>()
         this.ws = null
         this.dataRoom = null
@@ -43,9 +46,11 @@ export class WsRequestHandler implements RequestHandler {
                 dataAttach.roomId = roomId
                 this.room(dataAttach, (dataRoom: Data, error?: any) => {
                     if (error) return responseHandler.error()
-                    dataRoom.roomId = roomId
-                    this.dataRoom = dataRoom
-                    responseHandler.success()
+                    this.repositoryHandler.setRoom(responseHandler, {
+                        roomId: roomId,
+                        sessionId: dataRoom.message.session_id,
+                        sender: dataRoom.message.sender
+                    })
                 })
             })
         })
