@@ -1,0 +1,3 @@
+node_modules
+dist
+core/config/index.ts
